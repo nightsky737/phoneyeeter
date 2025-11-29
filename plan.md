@@ -24,4 +24,4 @@ Throw your phone!
  - give options for what to use to calibrate.
 
 # todo:
-
+- ig i figure out how to websocket onto a server (mine) before i figure out how to send stuff to clients.
