@@ -15,10 +15,14 @@
         function sendMessage() {
             var msgInput = document.getElementById("msg");
             var message = {"phone_id" : 1, "accel_data" : msgInput.value}
-            socket.send(message); 
+            socket.emit('accel_data', message); 
             msgInput.value = "";
         }
-    </script>
+
+        socket.on("pong", (args)=> {
+            console.log("u got pong'd")
+        }) 
+    </script> 
 </head> 
 <body>
     <h2>Flask WebSocket Chat</h2>

@@ -36,10 +36,11 @@ def index():
 #         sim.remove(request.get_json()["index"])
 #         return {}
 
-@socketio.on('message')
+@socketio.on('accel_data')
 def handle_join(data): #data be dict with phone_id, accelerometer data
     users[data["phone_id"]] = data["accel_data"]   
     emit("message", f"we got ur shit")
+    emit("pong")
 
     
 if __name__ == "__main__":
