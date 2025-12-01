@@ -1,2 +1,5 @@
 mediapipe
+flask
 flask-socketio
+eventlet
+gunicorn

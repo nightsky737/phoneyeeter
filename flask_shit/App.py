@@ -4,12 +4,12 @@ from flask import Flask, render_template, request, jsonify, url_for
 from flask_socketio import SocketIO, send, emit, join_room, leave_room 
 import random
 import json
-
+import os
 
 app = Flask(__name__) 
 
 app.config['SECRET_KEY'] = 'secret!' #i have no idea what this does but i guess its supposed to be an env variable. i deal with it later.
-socketio = SocketIO(app, cors_allowed_origins="*")
+socketio = SocketIO(app, cors_allowed_origins="*", async_mode='eventlet')
 
 users = {} #haha as if we would get > 1 user
 #will store the sids of users ig
@@ -38,11 +38,13 @@ def index():
 
 @socketio.on('accel_data')
 def handle_join(data): #data be dict with phone_id, accelerometer data
-    users[data["phone_id"]] = data["accel_data"]   
+    users[data["phone_id"]] = data["accel_data"]  
+    print(data) 
     emit("message", f"we got ur shit")
-    emit("pong")
+    emit("pong") 
 
     
 if __name__ == "__main__":
     # app.run(host="0.0.0.0", port=4500, debug=True)
-    socketio.run(app, host="0.0.0.0", port=4500, debug=True)
+    socketio.run(app, host="0.0.0.0", port= int(os.environ.get("PORT", 8080)), debug=True)
+    print("python !")

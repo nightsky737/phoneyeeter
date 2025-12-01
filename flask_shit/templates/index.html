@@ -1,26 +1,121 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <meta charset="UTF-8">
+    <title>Accelerometer test</title>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+<script>eruda.init();</script>
 
-    <title>3D 3-body problem</title>
-    <style>
-      body {
-        margin: 0;
+    <script>
+      function requestMotionPermission() {
+          if (typeof DeviceMotionEvent.requestPermission === 'function') {
+              DeviceMotionEvent.requestPermission()
+                  .then(response => {
+                      if (response === 'granted') {
+                          window.addEventListener('devicemotion', handleMotion);
+                      }
+                  })
+                  .catch(console.error);
+          } else {
+              window.addEventListener('devicemotion', handleMotion);
+          }
       }
-    </style>
-    <script type="importmap">
-			{
-				"imports": {
-					"three": "https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.module.js",
-          "jsm/": "https://cdn.jsdelivr.net/npm/three@0.161.0/examples/jsm/"
-        }
-			}
-		</script> 
-  </head>
-  <body>
-    hoi world. this hsit be a test.
+      let server_path = "http://192.168.1.134:8080" //"https://flask-shit.fly.dev/"
+        const socket = io(server_path);
+ 
 
+    function handleMotion(event) {
+		const acl = event.accelerationIncludingGravity;
+        console.log(acl)
+
+		// if (acc && acc.x !== null && acc.y !== null && acc.z !== null) {
+		// 	// Add to history for strum detection
+			// accelHistory.push({
+			// 	x: acc.x, 
+			// 	y: acc.y,
+			// 	z: acc.z,
+			// 	timestamp: Date.now()
+			// });
+ 
+          accel_data = {
+            'x' : acl.x,
+            'y' : acl.y,
+            'z' : acl.z
+          }
+          var message = {"phone_id" : 1, "accel_data" : accel_data}
+          socket.emit('accel_data', message); 
+        } 
+
+        socket.on("message", (msg) => {
+            console.log(msg)
+        })
+
+        socket.on("pong", (args)=> {
+            console.log("u got pong'd")
+        }) 
+
+    </script> 
+</head>   
+<body>
+    <canvas id="canvas"> </canvas>
+
+    <input id="msg" type="text" placeholder="Enter your message">
+    <button onclick="sendMessage()">Send</button>
+    <div id="messages"></div>
+  <button onclick="requestMotionPermission()">Enable Motion</button>
+    <video id="camFeed" autoplay loop muted hidden>
+    <source src="" >
+    </video>
 </body>
+
+<script>
+    const videoElement = document.getElementById('camFeed');
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+
+    const fps = 60;
+    const width = screen.width  * 0.8;
+    const height = screen.height * 0.8;
+    canvas.width = width
+    canvas.height = height
+
+       canvasInterval = window.setInterval(() => {
+    ctx.drawImage(videoElement, 0, 0, width, height);
+        }, 1000 / fps);
+
+
+    sendInterval = window.setInterval(() => {
+    const imageData = canvas.toDataURL('image/png')
+        console.log(imageData);
+
+        }, 500);
+
+    videoElement.onplay = function() {
+        clearInterval(canvasInterval);
+        clearInterval(sendInterval);
+
+
+        canvasInterval = window.setInterval(() => {
+    ctx.drawImage(videoElement, 0, 0, width, height);
+        }, 1000 / fps);
+    
+        sendInterval = window.setInterval(() => {
+        const imageData = canvas.toDataURL('image/png')
+ 
+         }, 500);
+        };
+
+    navigator.mediaDevices.getUserMedia({ video: true })
+        .then(stream => {
+            videoElement.srcObject = stream;
+            videoElement.onloadedmetadata = () => {
+            videoElement.play();
+
+            };    
+        }) 
+        .catch(error => {
+             alert("Could not access the camera. Please ensure you have a camera connected and grant permission.");
+        });
+</script>
 </html>
