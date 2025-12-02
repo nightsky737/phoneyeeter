@@ -100,12 +100,19 @@
     ctx.drawImage(videoElement, 0, 0, width, height);
         }, 1000 / fps);
     
-        sendInterval = window.setInterval(() => {
-        const imageData = canvas.toDataURL('image/png')
- 
-         }, 500);
-        };
+        // sendInterval = setInterval(() => {
+        //     canvas.toBlob((blob) => {
+        //         const reader = new FileReader();
+        //         reader.onloadend = () => {
+        //             const base64data = reader.result   
+        //             socket.emit('cam_data', base64data)  
+        //         };
+        //         reader.readAsDataURL(blob) 
+        //     }, 'image/png') 
+        // }, 1500);
 
+        };
+ 
     navigator.mediaDevices.getUserMedia({ video: true })
         .then(stream => {
             videoElement.srcObject = stream;

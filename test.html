@@ -17,16 +17,16 @@
             var message = {"phone_id" : 1, "accel_data" : msgInput.value}
             socket.emit('accel_data', message); 
             msgInput.value = "";
-        }
+        } 
 
         socket.on("pong", (args)=> {
             console.log("u got pong'd")
-        }) 
+        })  
     </script> 
-</head> 
-<body>
+</head>  
+<body> 
     <h2>Flask WebSocket Chat</h2>
-    <input id="msg" type="text" placeholder="Enter your message">
+    <input id="msg" type="text" placeholder="Enter your message"> 
     <button onclick="sendMessage()">Send</button>
     <div id="messages"></div>
 </body>

@@ -5,6 +5,8 @@ from flask_socketio import SocketIO, send, emit, join_room, leave_room
 import random
 import json
 import os
+import base64
+
 
 app = Flask(__name__) 
 
@@ -37,14 +39,21 @@ def index():
 #         return {}
 
 @socketio.on('accel_data')
-def handle_join(data): #data be dict with phone_id, accelerometer data
+def handle_accel(data): #data be dict with phone_id, accelerometer data
     users[data["phone_id"]] = data["accel_data"]  
     print(data) 
     emit("message", f"we got ur shit")
+    emit("pong") 
+
+
+@socketio.on('cam_data')
+def handle_cam(data): #data be dict with phone_id, accelerometer data
+    with open("imageToSave.png", "wb") as fh:
+        fh.write(data)
+
     emit("pong") 
 
     
 if __name__ == "__main__":
     # app.run(host="0.0.0.0", port=4500, debug=True)
     socketio.run(app, host="0.0.0.0", port= int(os.environ.get("PORT", 8080)), debug=True)
-    print("python !")
