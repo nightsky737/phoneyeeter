@@ -22,45 +22,51 @@ const ctx = canvas.getContext('2d')
 let loaded = false
 
 const fps = 60;
-const width = screen.width  * 0.8;
-const height = screen.height * 0.8;
+const width = screen.width * 0.8 ;
+const height = screen.height;
+
+const vidH = 480
+const vidW = 640
+
 canvas.width = width
 canvas.height = height
+ctx.font = "20px Georgia";
+
 
 videoElement.addEventListener('loadeddata', function() {
   loaded = true;
-  console.log("ac load")
 }, false);
 
 function loop() {
-
 ctx.drawImage(videoElement, 0, 0, width, height);
 
-
-console.log(loaded)
 if (loaded){
 const detections = objectDetector.detectForVideo(
 videoElement,
 performance.now()
-);
+); 
+
+
+detections.detections.forEach(det => {
+    console.log(videoElement.videoWidth)
+    console.log(videoElement.videoHeight)
+
+    let box = det.boundingBox
+    let cat = det.categories
+    ctx.strokeStyle = "red";
+
+    ctx.strokeRect(box.originX *  width / vidW, box.originY  *height / vidH, box.width *  width / vidW, box.height*height / vidH)
+    ctx.fillText(cat[0].categoryName , box.originX *  width / vidW, box.originY*height / vidH);
+
+});
+
 console.log(detections)
 }
-requestAnimationFrame(loop);
 
+requestAnimationFrame(loop);
 };
 loop();
 
-
-
-
-// videoElement.onplay = function() {
-
-
-// canvasInterval = window.setInterval(() => {
-// ctx.drawImage(videoElement, 0, 0, width, height);
-// }, 1000 / fps);
-
-// };
 
 navigator.mediaDevices.getUserMedia({ video: true })
 .then(stream => {
