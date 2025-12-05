@@ -1,66 +1,65 @@
 
-    import {
-    FilesetResolver,
-    ObjectDetector
-    } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision/vision_bundle.js";
+import {
+FilesetResolver,
+ObjectDetector
+} from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision/vision_bundle.js";
 
-    const vision = await FilesetResolver.forVisionTasks(
-    "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm"
-    );
+const vision = await FilesetResolver.forVisionTasks(
+"https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm"
+);
 
-    let objectDetector = await ObjectDetector.createFromOptions(vision, {
-    baseOptions: {
-    modelAssetPath: `https://storage.googleapis.com/mediapipe-tasks/object_detector/efficientdet_lite0_uint8.tflite`
-    },
-    scoreThreshold: 0.5,
-    runningMode: "VIDEO"
-    });
+let objectDetector = await ObjectDetector.createFromOptions(vision, {
+baseOptions: {
+modelAssetPath: `https://storage.googleapis.com/mediapipe-tasks/object_detector/efficientdet_lite0_uint8.tflite`
+},
+scoreThreshold: 0.5,
+runningMode: "VIDEO"
+});
 
-    const videoElement = document.getElementById('camFeed')
-    const canvas = document.getElementById('canvas') 
-    const ctx = canvas.getContext('2d') 
-
-
-    let sendInterval; //aprarently it returns a number
-    const fps = 60;
-    const width = screen.width  * 0.8;
-    const height = screen.height * 0.8;
-    canvas.width = width
-    canvas.height = height
-
-    let canvasInterval = window.setInterval(() => {
-
-    ctx.drawImage(videoElement, 0, 0, width, height);
-    }, 1000 / fps);
-
-    if (videoElement.videoWidth > 0){
-    const detections = objectDetector.detectForVideo(
-    videoElement,
-    performance.now()
-    );
-    console.log(detections)
-    }
+const videoElement = document.getElementById('camFeed')
+const canvas = document.getElementById('canvas') 
+const ctx = canvas.getContext('2d') 
 
 
-    videoElement.onplay = function() {
-    clearInterval(canvasInterval);
+const fps = 60;
+const width = screen.width  * 0.8;
+const height = screen.height * 0.8;
+canvas.width = width
+canvas.height = height
+
+let canvasInterval = window.setInterval(() => {
+
+ctx.drawImage(videoElement, 0, 0, width, height);
+}, 1000 / fps);
+
+if (videoElement.videoWidth > 0){
+const detections = objectDetector.detectForVideo(
+videoElement,
+performance.now()
+);
+console.log(detections)
+}
 
 
-    canvasInterval = window.setInterval(() => {
-    ctx.drawImage(videoElement, 0, 0, width, height);
-    }, 1000 / fps);
+videoElement.onplay = function() {
+clearInterval(canvasInterval);
 
-    };
 
-    navigator.mediaDevices.getUserMedia({ video: true })
-    .then(stream => {
-        videoElement.srcObject = stream;
-        videoElement.onloadedmetadata = () => {
-        videoElement.play();
+canvasInterval = window.setInterval(() => {
+ctx.drawImage(videoElement, 0, 0, width, height);
+}, 1000 / fps);
 
-        };    
-    }) 
-    .catch(error => {
-            alert("Could not access the camera. Please ensure you have a camera connected and grant permission.");
-    });
+};
+
+navigator.mediaDevices.getUserMedia({ video: true })
+.then(stream => {
+    videoElement.srcObject = stream;
+    videoElement.onloadedmetadata = () => {
+    videoElement.play();
+
+    };    
+}) 
+.catch(error => {
+        alert("Could not access the camera. Please ensure you have a camera connected and grant permission.");
+});
 

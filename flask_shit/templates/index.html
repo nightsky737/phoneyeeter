@@ -5,7 +5,8 @@
     <title>Accelerometer test</title>
     <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
-<script>eruda.init();</script>
+    <script>eruda.init();</script>
+    <link rel="stylesheet" href="../static/css/pc.css">
 
     <script>
       function requestMotionPermission() {
@@ -63,10 +64,67 @@
     <button onclick="sendMessage()">Send</button>
     <div id="messages"></div>
   <button onclick="requestMotionPermission()">Enable Motion</button>
-    <video id="camFeed" autoplay loop muted hidden>
-    <source src="" >
+    <video id="camFeed" autoplay loop muted hidden source src="" ></video>
+    
+<div id="mySidebar" class="sidebar">
+  <h1 id = "bodyinfoheader">Body Info</h1>
+  <a href="javascript:void(0)" id="closebtn"  >×</a>
+  
+<p>Position (x,y,z)</p>
+<div class = 'inputs'>
+
+<div class="x">
+<input id="pos-x" class="bodyinput x-group" type="number" step="any" placeholder="x" />
+<input id="pos-y" class="bodyinput x-group" type="number" step="any" placeholder="y" />
+<input id="pos-z" class="bodyinput x-group" type="number" step="any" placeholder="z" />
+</div>
+
+
+<p>Velocity (x,y,z)</p>
+<div class="v">
+<input id="vel-x" class="bodyinput v-group" type="number" step="any" placeholder="x" />
+<input id="vel-y" class="bodyinput v-group" type="number" step="any" placeholder="y" />
+<input id="vel-z" class="bodyinput v-group" type="number" step="any" placeholder="z" />
+</div>
+
+<p>Acceleration (x,y,z)</p>
+<div class="a">
+<input id="acc-x" class="bodyinput a-group" type="number" step="any" placeholder="x" />
+<input id="acc-y" class="bodyinput a-group" type="number" step="any" placeholder="y" />
+<input id="acc-z" class="bodyinput a-group" type="number" step="any" placeholder="z" />
+</div>
+
+
+<p>Mass</p>
+<input id="mass"class="bodyinput"   type="number" step="any" placeholder="Mass" style="width: 100%; margin-bottom: 10px;" />
+
+<p>Radius</p>
+<input id="radius" class="bodyinput" type="number" step="any" placeholder="Radius" style="width: 100%; margin-bottom: 10px;" />
+
+<p>Color</p>
+<div class = "flex-container">
+<input id="R" class="bodyinput c-group" type="number" step="any" placeholder="Radius" style="width: 100%; margin-bottom: 10px;" />
+<input id="G" class="bodyinput c-group" type="number" step="any" placeholder="Radius" style="width: 100%; margin-bottom: 10px;" />
+<input id="B" class="bodyinput c-group" type="number" step="any" placeholder="Radius" style="width: 100%; margin-bottom: 10px;" />
+
+
+</div>
+
+
+</div>
+
+<button id="prevBall">Previous</button>
+<button id="nextBall">Next</button>
+
+<button id="deleteBall">Delete Current</button>
+
+<!-- <button id="add-body">Add Body</button> -->
+</div>
+
+
+
     </video>
 </body>
 
-<script src = '../static/js/Camera.js'></script>
+<script type = 'module' src = '../static/js/Camera.js'></script>
 </html>
