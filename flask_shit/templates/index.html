@@ -59,7 +59,6 @@
 </head>   
 <body>
     <canvas id="canvas"> </canvas>
-
     <input id="msg" type="text" placeholder="Enter your message">
     <button onclick="sendMessage()">Send</button>
     <div id="messages"></div>
@@ -69,60 +68,5 @@
     </video>
 </body>
 
-<script>
-    const videoElement = document.getElementById('camFeed');
-    const canvas = document.getElementById('canvas');
-    const ctx = canvas.getContext('2d');
-
-    const fps = 60;
-    const width = screen.width  * 0.8;
-    const height = screen.height * 0.8;
-    canvas.width = width
-    canvas.height = height
-
-       canvasInterval = window.setInterval(() => {
-    ctx.drawImage(videoElement, 0, 0, width, height);
-        }, 1000 / fps);
-
-
-    sendInterval = window.setInterval(() => {
-    const imageData = canvas.toDataURL('image/png')
-        console.log(imageData);
-
-        }, 500);
-
-    videoElement.onplay = function() {
-        clearInterval(canvasInterval);
-        clearInterval(sendInterval);
-
-
-        canvasInterval = window.setInterval(() => {
-    ctx.drawImage(videoElement, 0, 0, width, height);
-        }, 1000 / fps);
-    
-        // sendInterval = setInterval(() => {
-        //     canvas.toBlob((blob) => {
-        //         const reader = new FileReader();
-        //         reader.onloadend = () => {
-        //             const base64data = reader.result   
-        //             socket.emit('cam_data', base64data)  
-        //         };
-        //         reader.readAsDataURL(blob) 
-        //     }, 'image/png') 
-        // }, 1500);
-
-        };
- 
-    navigator.mediaDevices.getUserMedia({ video: true })
-        .then(stream => {
-            videoElement.srcObject = stream;
-            videoElement.onloadedmetadata = () => {
-            videoElement.play();
-
-            };    
-        }) 
-        .catch(error => {
-             alert("Could not access the camera. Please ensure you have a camera connected and grant permission.");
-        });
-</script>
+<script src = '../static/js/Camera.js'></script>
 </html>

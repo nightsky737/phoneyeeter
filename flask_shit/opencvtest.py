@@ -6,7 +6,7 @@ Origin be top left corner
 +  is left and down
 
 '''
-
+ 
 import cv2
 import time
 import mediapipe as mp
@@ -15,7 +15,7 @@ mp_holistic = mp.solutions.holistic
 
 cap = cv2.VideoCapture(0) #caps from cam 0 i believe
 ptime = 0
-
+ 
 
 model_path = "models\efficientdet_lite0.tflite"
 BaseOptions = mp.tasks.BaseOptions
