@@ -19,7 +19,7 @@ runningMode: "VIDEO"
 const videoElement = document.getElementById('camFeed')
 const canvas = document.getElementById('canvas') 
 const ctx = canvas.getContext('2d') 
-
+let loaded = false
 
 const fps = 60;
 const width = screen.width  * 0.8;
@@ -27,29 +27,40 @@ const height = screen.height * 0.8;
 canvas.width = width
 canvas.height = height
 
-let canvasInterval = window.setInterval(() => {
+videoElement.addEventListener('loadeddata', function() {
+  loaded = true;
+  console.log("ac load")
+}, false);
+
+function loop() {
 
 ctx.drawImage(videoElement, 0, 0, width, height);
-}, 1000 / fps);
 
-if (videoElement.videoWidth > 0){
+
+console.log(loaded)
+if (loaded){
 const detections = objectDetector.detectForVideo(
 videoElement,
 performance.now()
 );
 console.log(detections)
 }
-
-
-videoElement.onplay = function() {
-clearInterval(canvasInterval);
-
-
-canvasInterval = window.setInterval(() => {
-ctx.drawImage(videoElement, 0, 0, width, height);
-}, 1000 / fps);
+requestAnimationFrame(loop);
 
 };
+loop();
+
+
+
+
+// videoElement.onplay = function() {
+
+
+// canvasInterval = window.setInterval(() => {
+// ctx.drawImage(videoElement, 0, 0, width, height);
+// }, 1000 / fps);
+
+// };
 
 navigator.mediaDevices.getUserMedia({ video: true })
 .then(stream => {
@@ -59,7 +70,7 @@ navigator.mediaDevices.getUserMedia({ video: true })
 
     };    
 }) 
-.catch(error => {
+.catch(error => { 
         alert("Could not access the camera. Please ensure you have a camera connected and grant permission.");
 });
 
