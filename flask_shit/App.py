@@ -13,18 +13,77 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!' #i have no idea what this does but i guess its supposed to be an env variable. i deal with it later.
 socketio = SocketIO(app, cors_allowed_origins="*", async_mode='eventlet')
 
-users = {} #haha as if we would get > 1 user
-#will store the sids of users ig
+
+def integrate_list(datalist, timesteps):
+    total  = 0
+    #ig ill just LHS riemanns it
+    for i in range(len(datalist)):
+        total += datalist[i] * (timesteps[i + 1] - timesteps[i]) / 1000 #cause in milli
+    return total
+
+def proj_motion(vix, viy, dt=0.03):
+    g = 9.81 
+    x = 0
+    y = 0
+    #this is all in meters
+    points = [[0,0]]
+    while(y >= -2):
+        #no shot u drop it from >2m
+        x += vix * dt
+        y += viy * dt
+        viy -= g * dt
+        points.append([x, y])
+    
+def find_acceleration(accel_data):
+    #int over x y z sperately. Returns {vx, vy, vz}
+    ax = sum([datapoint['x'] for datapoint in accel_data])
+    ay = [datapoint['y'] for datapoint in accel_data]
+    # az = [datapoint['z'] for datapoint in accel_data]
+    timesteps = [datapoint['timestep'] for datapoint in accel_data]
+
+    vix = integrate_list(ax, timesteps)
+    viy = integrate_list(ay, timesteps)
+
+
+    return proj_motion(vix, viy)
+
+users = {} 
+'''
+Example user data:
+uid : 
+'''
+
 
 @app.route('/')
 def index():
-    # sim.refresh()
     return render_template('index.html')
 
-# @app.route("/get_one_body_info", methods=["POST"]) 
-# def get_info():
-#     if request.method == 'POST':
-#         return jsonify(sim.get_one_body_info(request.get_json()['index']))
+@app.route('/newUser',  methods=["POST"])
+def newUser():
+    if request.method == 'POST':
+        data = request.get_json()
+        users[data["uid"]] = {}
+        users[data["uid"]]["last_signal"] = 0 #now
+    return {}
+
+@app.route("/setHeight", methods=["POST"]) 
+def setHeight():
+    if request.method == 'POST':
+        data = request.get_json()
+        users[data["uid"]]['h'] = data["height"]
+        print(users)
+        return {}
+
+@app.route("/pushAccel", methods=["POST"]) 
+def pushAccel():
+    if request.method == 'POST':
+        data = request.get_json()
+        # users[data["uid"]]['adata'] = data['data']
+
+        find_acceleration(data['data'])
+
+        return {}
+
 
 # @app.route("/wind", methods=["POST"]) 
 # def wind():
@@ -38,6 +97,13 @@ def index():
 #         sim.remove(request.get_json()["index"])
 #         return {}
 
+@socketio.on('connect')
+def handle_connect():
+    uid = request.sid
+    users[uid] = {}
+    users[uid]["last_signal"] = 0 #now
+    emit("uid", uid)
+
 @socketio.on('accel_data')
 def handle_accel(data): #data be dict with phone_id, accelerometer data
     users[data["phone_id"]] = data["accel_data"]  
@@ -46,12 +112,12 @@ def handle_accel(data): #data be dict with phone_id, accelerometer data
     emit("pong") 
 
 
-@socketio.on('cam_data')
-def handle_cam(data): #data be dict with phone_id, accelerometer data
-    with open("imageToSave.png", "wb") as fh:
-        fh.write(data)
+# @socketio.on('cam_data')
+# def handle_cam(data): #data be dict with phone_id, accelerometer data
+#     with open("imageToSave.png", "wb") as fh:
+#         fh.write(data)
 
-    emit("pong") 
+#     emit("pong") 
 
     
 if __name__ == "__main__":

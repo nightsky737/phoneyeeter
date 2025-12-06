@@ -7,99 +7,31 @@
     <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
     <script>eruda.init();</script>
     <link rel="stylesheet" href="../static/css/pc.css">
-
-    <script>
-      function requestMotionPermission() {
-          if (typeof DeviceMotionEvent.requestPermission === 'function') {
-              DeviceMotionEvent.requestPermission()
-                  .then(response => {
-                      if (response === 'granted') {
-                          window.addEventListener('devicemotion', handleMotion);
-                      }
-                  })
-                  .catch(console.error);
-          } else {
-              window.addEventListener('devicemotion', handleMotion);
-          }
-      }
-      let server_path = "http://192.168.1.134:8080" //"https://flask-shit.fly.dev/"
-        const socket = io(server_path);
- 
-
-    function handleMotion(event) {
-		const acl = event.accelerationIncludingGravity;
-        console.log(acl)
-
-		// if (acc && acc.x !== null && acc.y !== null && acc.z !== null) {
-		// 	// Add to history for strum detection
-			// accelHistory.push({
-			// 	x: acc.x, 
-			// 	y: acc.y,
-			// 	z: acc.z,
-			// 	timestamp: Date.now()
-			// });
- 
-          accel_data = {
-            'x' : acl.x,
-            'y' : acl.y,
-            'z' : acl.z
-          }
-          var message = {"phone_id" : 1, "accel_data" : accel_data}
-          socket.emit('accel_data', message); 
-        } 
-
-        socket.on("message", (msg) => {
-            console.log(msg)
-        })
-
-        socket.on("pong", (args)=> {
-            console.log("u got pong'd")
-        }) 
-
-    </script> 
+<script type = 'module' src = '../static/js/accelerometer.js'></script>
 </head>   
 <body>
+<div class = "mobile">
+  <button id="motionPerms">Enable Motion</button>
+  <button id="startTracking">Start Tracking</button>
+
+</div>
+
+<div class = "pc">
+
+
     <canvas id="canvas"> </canvas>
-    <input id="msg" type="text" placeholder="Enter your message">
-    <button onclick="sendMessage()">Send</button>
     <div id="messages"></div>
-  <button onclick="requestMotionPermission()">Enable Motion</button>
 <video id="camFeed" autoplay loop muted class="hidden"> </video>
     
 <div id="mySidebar" class="sidebar">
-  <h1 id = "bodyinfoheader">Body Info</h1>
-  <a href="javascript:void(0)" id="closebtn">×</a>
-  
-<p>Position (x,y,z)</p>
-<div class = 'inputs'>
-
-<div class="x">
-<input id="pos-x" class="bodyinput x-group" type="number" step="any" placeholder="x" />
-<input id="pos-y" class="bodyinput x-group" type="number" step="any" placeholder="y" />
-<input id="pos-z" class="bodyinput x-group" type="number" step="any" placeholder="z" />
-</div>
+<h1 id = "bodyinfoheader">Settings</h1>
 
 
-<p>Velocity (x,y,z)</p>
-<div class="v">
-<input id="vel-x" class="bodyinput v-group" type="number" step="any" placeholder="x" />
-<input id="vel-y" class="bodyinput v-group" type="number" step="any" placeholder="y" />
-<input id="vel-z" class="bodyinput v-group" type="number" step="any" placeholder="z" />
-</div>
-
-<p>Acceleration (x,y,z)</p>
-<div class="a">
-<input id="acc-x" class="bodyinput a-group" type="number" step="any" placeholder="x" />
-<input id="acc-y" class="bodyinput a-group" type="number" step="any" placeholder="y" />
-<input id="acc-z" class="bodyinput a-group" type="number" step="any" placeholder="z" />
-</div>
+<p>Height (Meters)</p>
+<input id="height" class="bodyinput" type="number" step="any" placeholder="height" style="width: 100%; margin-bottom: 10px;" />
+<button id="heightButton">Set Height</button>
 
 
-<p>Mass</p>
-<input id="mass"class="bodyinput"   type="number" step="any" placeholder="Mass" style="width: 100%; margin-bottom: 10px;" />
-
-<p>Radius</p>
-<input id="radius" class="bodyinput" type="number" step="any" placeholder="Radius" style="width: 100%; margin-bottom: 10px;" />
 
 <p>Color</p>
 <div class = "flex-container">
@@ -117,14 +49,12 @@
 <button id="nextBall">Next</button>
 
 <button id="deleteBall">Delete Current</button>
-
-<!-- <button id="add-body">Add Body</button> -->
 </div>
 
-
-
-    </video>
+<!-- <button id="add-body">Add Body</button> -->
 </body>
+<script type = 'module' src = '../static/js/simulation.js'></script>
 
-<script type = 'module' src = '../static/js/Camera.js'></script>
+<script type = 'module' src = '../static/js/camera.js'></script>
+
 </html>

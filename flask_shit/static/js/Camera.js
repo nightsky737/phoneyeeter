@@ -46,21 +46,24 @@ videoElement,
 performance.now()
 ); 
 
-
+let foundperson = false;
 detections.detections.forEach(det => {
-    console.log(videoElement.videoWidth)
-    console.log(videoElement.videoHeight)
+    // console.log(videoElement.videoWidth)
+    // console.log(videoElement.videoHeight)
 
     let box = det.boundingBox
     let cat = det.categories
-    ctx.strokeStyle = "red";
-
-    ctx.strokeRect(box.originX *  width / vidW, box.originY  *height / vidH, box.width *  width / vidW, box.height*height / vidH)
-    ctx.fillText(cat[0].categoryName , box.originX *  width / vidW, box.originY*height / vidH);
+    if(cat[0].categoryName == 'person' && !foundperson){
+      foundperson = true;
+      ctx.strokeStyle = "red";
+      ctx.strokeRect(box.originX *  width / vidW, box.originY  *height / vidH, box.width *  width / vidW, box.height*height / vidH)
+      ctx.fillText(cat[0].categoryName , box.originX *  width / vidW, box.originY*height / vidH);
+      
+    }
 
 });
 
-console.log(detections)
+// console.log(detections)
 }
 
 requestAnimationFrame(loop);

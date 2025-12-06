@@ -158,10 +158,25 @@ button {
   outline: none;
 }
 
-    .hidden {
+.hidden {
 
     opacity: 0;
     pointer-events: none;
 
     z-index: -1;
+}
+
+
+@media (max-width: 767px) {
+  
+    .mobile {
+        display: none;
+    }
+}
+
+@media (min-width: 768px) {
+   
+    .pc {
+        display: none;
+    }
 }
